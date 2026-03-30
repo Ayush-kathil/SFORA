@@ -1,36 +1,75 @@
-# Smart File Organizer (SFORA)
+<div align="center">
 
-My computer's `Downloads` folder is generally an absolute disaster. Every semester it just fills up with thousands of random PDFs from university, tons of project images, zip files, and identical assignment duplicates. I finally got annoyed with manually dragging files around every single week, so I decided to learn native Java file I/O and build **SFORA** over a weekend to completely automate the process.
+# 🗂️ Smart File Organizer (SFORA)
+**A high-performance, 100% pure Java automated file management system.**
 
-**Note: This is a 100% pure Java project. It utilizes exactly zero external dependencies, libraries, or APIs. It leverages native `java.io.*` and `java.nio.file.*` standard libraries to safely achieve everything.**
+[![Java Version](https://img.shields.io/badge/Java-8%2B-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://java.com/)
+[![CLI Interface](https://img.shields.io/badge/Interface-CLI-000000?style=for-the-badge&logo=windows-terminal)](https://github.com/)
+[![Dependencies](https://img.shields.io/badge/Dependencies-0-success?style=for-the-badge)](#)
 
-## What it Does (Best Features)
-1. **Total Auto-Organization**: Just point it at a messy folder and it scoops everything up, organizing the clutter logically into dedicated folders like `Documents/` and `Images/` based on extensions.
-2. **Custom Rules**: You can edit the `rules.txt` config file. Tell it to specifically snag anything with the word "finance" in the file name and dump it into a `Taxes/` folder, completely ignoring its extension.
-3. **Dry Run (Preview Mode)**: I was honestly terrified of running it for the first time and dumping my entire hard drive somewhere I couldn't find it. So I built a "Preview changes" mode. It just simulates the logic and spits out what *would* happen (without actually moving a single file).
-4. **Permanent Undo Tracker**: Every move is appended straight to an `action_log.txt` file. You can close the app entirely, run it exactly a week later, select `Undo all changes`, and the program natively parses the text log backward and perfectly restores every single file.
-5. **Advanced Space Saver**: I added an advanced filter option that allows you to specify a Megabyte threshold (e.g. > `500` MB). The program actively hunts down giant forgotten video/ISO files and surgically extracts them into a `BigFiles/` folder.
-6. **Fast Dupe Checking & Filename Cleaning**: Easily removes awful invisible character spaces from file names and catches exact duplicates by cross-checking matching file sizes + name attributes natively.
+*Eliminate digital clutter in milliseconds using native Java automation.*
 
-## How to run it
+</div>
 
-Because it explicitly avoids complex build wrappers, you can test it on any machine running a JVM instantaneously:
+---
 
-1. Compile the 5 root `.java` source files inside the `src/` directory:
+## ⚡ Overview
+SFORA (Smart File Organizer with Rule-Based Automation) is a lightweight yet extremely powerful desktop utility designed to securely organize chaotic file directories (such as the `Downloads` folder). 
+
+It dynamically scans, categorizes, and safely relocates files into structured taxonomies while actively recording every transaction, allowing users to safely automate complex filesystem management without sacrificing security or control. 
+
+> [!NOTE]
+> **Minimalist Engineering:** SFORA operates absolutely free of external dependencies or bloated third-party libraries. Built entirely on the native `java.io` and `java.nio` standard libraries, it guarantees absolute cross-platform execution (Windows, macOS, Linux).
+
+---
+
+## 🚀 Key Features
+
+### 🎯 1. Intelligent Taxonomy Routing
+Automatically funnels heterogeneous files into universally understood directories based on their strict data extensions.
+* `.pdf`, `.docx`, `.txt` ➡️ `/Documents`
+* `.png`, `.jpg`, `.svg` ➡️ `/Images`
+* `.mp4`, `.mp3`, `.wav` ➡️ `/Media`
+
+### ⚙️ 2. Dynamic Rule Configuration (`rules.txt`)
+Takes priority over basic file extensions. Empower the system to isolate files based on explicit keyword mapping. For example, automatically route any file containing the string `"assignment"` directly into a `/University` directory, bypassing normal rules.
+
+### 🛡️ 3. "Dry Run" Environment Preview
+Visualizes the exact data relocation payload *before* touching a single byte on the physical drive. Instantly calculates potential move counts and uniquely flags massive, storage-hungry files (`> 100MB`) in the preview console.
+
+### 🕰️ 4. Persistent Memento Undo (`action_log.txt`)
+Never fear losing data. Every atomic movement executes a parallel disk-write to a hardened log file mapping the `Source ➡️ Destination`. The program natively reverse-engineers this exact log allowing you to execute a highly robust **Full Rollback** even days after the initial transaction.
+
+### 🧹 5. Advanced System Cleanup
+- **Duplicate Execution:** Isolates redundant file clones matching precise byte-lengths ($O(N)$ string mapping) into a dedicated `/Duplicates` silo.
+- **Space Savers:** Allows users to input a precise MB integer threshold (e.g. `> 1GB`) and automatically isolates massive system ISOs or archives in seconds.
+- **Topological Scrubbing:** Automatically purges empty directory nodes post-execution, preventing digital "ghost-folder" fragmenting.
+
+---
+
+## 💻 Execution Protocol
+
+Deploying the framework requires zero environmental setup outside of a base JDK installation.
+
+**1. Establish Binary Path**
 ```bash
 mkdir bin
 javac -d bin src/*.java
 ```
 
-2. Run the main app!
+**2. Boot Application Interface**
 ```bash
 java -cp bin Main
 ```
 
-## Sample Output
+---
+
+## ⌨️ Interface Preview
+SFORA uses a locked-context, continuous 7-option execution loop designed for effortless terminal interaction.
+
 ```text
 ---------------------------------
-SMART FILE ORGANIZER
+     SMART FILE ORGANIZER
 ---------------------------------
 Enter folder path:
 > C:\Downloads
@@ -44,11 +83,11 @@ Then show options:
 6. Clean file names
 7. Extract large files (Space Saver)
 8. Exit
-> 7
-Enter size limit in MB (e.g., 50): 100
-Moved huge file: big_system_image.iso (1400MB)
+> 1
 
-Isolated 1 huge files into the 'BigFiles' folder.
+How do you want to organize it?
+- Organize by file type
+- Organize by rules
+- Hybrid (recommended)
+> hybrid
 ```
-
-Hope this tool natively cleans up your filesystem!
