@@ -1,119 +1,37 @@
-<div align="center">
-  <img src="https://img.icons8.com/nolan/256/folder-invoices.png" alt="SFORA Logo" width="120" />
-  
-  # 🚀 SFORA 
-  **Smart File Organizer with Rule-Based Automation** 
-  
-  [![Java Core](https://img.shields.io/badge/Java-8%2B-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://java.com/)
-  [![Build](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge&logo=githubactions&logoColor=white)](#)
-  [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](#)
-  [![Platform](https://img.shields.io/badge/Platform-Cross--Platform-lightgrey?style=for-the-badge)](#)
+# File Organizer Project (SFORA)
 
-  <p align="center">
-    <strong>SFORA</strong> is a brutally light, extremely fast directory orchestrator built completely in pure Java. Quit struggling with massive, unstructured <code>Downloads/</code> folders. SFORA cleans, audits, and structures messy files in milliseconds.
-  </p>
-</div>
+This is a Java-based desktop application designed to automatically sort and clean up messy directories (like a typical `Downloads` folder). It organizes files into appropriate sub-folders based on file extensions or custom keywords. I built this purely using standard Java I/O (`java.io`) and a basic Swing GUI (`javax.swing`), ensuring it requires absolutely zero external libraries.
 
----
+## 📌 Project Overview
+The application functions as a hybrid tool. When executed, it allows the user to run standard Terminal interactions (CLI) or a graphical window (GUI). The core mechanism iterates through a specified directory tree and physically moves files using `Files.move()` into target folders according to simple conditions.
 
-<details open>
-  <summary><b>📑 Table of Contents</b></summary>
-  <br/>
-  
-  1. [✨ The Problem & Solution](#-the-problem--solution)
-  2. [🔥 Core Architecture Diagram](#-core-architecture-diagram)
-  3. [🛠️ Technical Features](#%EF%B8%8F-technical-features)
-  4. [💻 Seamless Execution](#-seamless-execution)
-  5. [⚙️ Custom Rules Engine](#%EF%B8%8F-custom-rules-engine)
-  6. [🔄 Action Log & Revert](#-action-log--revert)
-</details>
+## ✨ Key Features
+1. **Hybrid Interface**: Supports both a command-line prompt and a Native Java Swing window. 
+2. **File Sorting**: Automatically reads file extensions (like `.pdf` or `.png`) and creates categorical folders (`/Documents`, `/Images`) to store them.
+3. **Custom Sorting Rules**: The application reads a local `rules.txt` file at runtime. You can specify custom mapping (e.g., if a file name contains "assignment", force it to a `/University` folder).
+4. **Duplicate Finder**: Finds basic exact duplicate files by checking if they share the identical name and byte size in memory.
+5. **Action Logging (Undo)**: Every time a file is fundamentally moved, its source and destination are recorded in `action_log.txt`. The program can read this text file backward to restore changed files completely safely.
+6. **Big File Search**: Scans and isolates massive video or zip files exceeding a specified Megabyte limit into a separate folder.
 
----
+## 📂 File Structure
+The project is intentionally kept simple and compressed into three fundamental Java files:
+*   `App.java`: Contains the `main` method. It prompts the user for CLI/GUI selection and houses the `Scanner` terminal loop.
+*   `GUI.java`: Contains the layout for the Application Window using `BorderLayout` and custom black/white button themes.
+*   `Sorter.java`: The backend utility script that executes the logic (directory loops, duplicate hashing, and text-file writing).
 
-## ✨ The Problem & Solution
+## 💻 How to Compile & Run
 
-Standard file management is **manual, tedious, and highly error-prone**. Browsing through thousands of heterogeneous documents, installers, and archives wastes countless hours. 
+To evaluate the application, open your terminal (Command Prompt, PowerShell, or bash) in the root directory where the `src/` folder is located.
 
-**The Solution:** SFORA leverages an autonomous `java.io` decision-tree engine to isolate files, verify configurations, duplicate-check using string arrays, and safely migrate massive data sets accurately—all running head-less via a highly intuitive CLI loop.
-
----
-
-## 🔥 Core Architecture Diagram
-
-SFORA executes atomic operations routing files dynamically prior to validating local duplicate collisions.
-
-```mermaid
-flowchart LR
-    A[Unorganized Root Folder] -->|CLI Boot| B{SFORA Engine}
-    B -->|Name/Size Hash| C{Duplicate Scan}
-    C -->|If Match| D([/Duplicates])
-    C -->|Fallback Check| E{Match Category}
-    E --> F([/Documents])
-    E --> G([/Images])
-    E --> H([/Archives])
-    E --> I[Custom rules.txt]
-```
-
----
-
-## 🛠️ Technical Features
-
-| Feature Module | Technical Overview |
-|:---|:---|
-| 🗂️ **Taxonomy Shunting** | Evaluates object extensions dynamically (`.png` --> `/Images`, `.zip` --> `/Archives`, `.docx` --> `/Documents`). |
-| 🛡️ **$O(N)$ Dupe Finder** | Avoids expensive cryptographic tracking by natively executing parallel `FileName + ByteSize` pairing to intercept deep storage duplications. |
-| 🔮 **Dry-Run Environment** | Initiates strict read-only execution pipelines, aggressively scanning target folders and compiling simulated statistics (including explicitly flagging `>100MB` files) prior to committing disk I/O. |
-| ⏪ **Persistent Rollback** | Caches atomic disk relocations to a universal `action_log.txt` matrix. This physical Memento system explicitly enables users to execute absolute "Undo" protocols flawlessly, even upon terminating the application. |
-| 🧹 **Space-Saver Extraction** | Allows dynamic runtime configurations filtering massive storage-hog files (e.g. ISOs, VM files) utilizing strict `long megabytes` thresholds, isolating them securely. |
-
----
-
-## 💻 Seamless Execution
-
-SFORA inherently enforces **Zero Dependency Architecture**. No Maven, no Gradle, no frameworks. It behaves identically across Unix, Linux, and Windows ecosystems.
-
-### 1. Source Compilation
-Bootstrap from your root folder.
+**Step 1. Compile the code:**
 ```bash
-> mkdir bin
-> javac -d bin src/*.java
+mkdir bin
+javac -d bin src/*.java
 ```
 
-### 2. Boot Application
-Initialize the terminal sequence.
+**Step 2. Run the program:**
 ```bash
-> java -cp bin Main
+java -cp bin App
 ```
 
----
-
-## ⚙️ Custom Rules Engine
-
-Don't want generic file-type sorting? Explicitly define absolute routing behaviors universally in `rules.txt`.
-
-```text
-# CONFIGURATION FORMAT: TYPE=pattern,FOLDER=target_folder
-KEYWORD=assignment,FOLDER=University Completed
-KEYWORD=invoice,FOLDER=Financial Taxes 2026
-EXTENSION=mp4,FOLDER=Heavy Media
-```
-*The engine evaluates top-down: prioritizing Keywords, falling back to Extensions, and ultimately resorting to standard Taxonomy resolution.*
-
----
-
-## 🔄 Action Log & Revert System
-
-SFORA natively parses `action_log.txt` iteratively backwards `(--)` to guarantee perfectly safe operations against nested dependencies.
-
-**Example Internal Log Syntax:**
-```text
-C:\Downloads\homework.pdf | C:\Downloads\University Completed\homework.pdf | 2026-03-31 16:30:21
-```
-
-If a user executes Option 4 (`Undo All`), SFORA dynamically rips through this state log, explicitly recreating deleted root directories natively and executing `StandardCopyOption.REPLACE_EXISTING` cascades safely.
-
-<div align="center">
-  <br/>
-  <b>Built flawlessly utilizing pure Java. 🚀</b>
-  <br/>
-</div>
+*Note: Once executed, simply follow the on-screen prompts to navigate between the Terminal and Graphical window.*
