@@ -1,36 +1,57 @@
-# SFORA - Smart File Organizer
+# SFORA: Smart File Organizer
 
-Hi! Welcome to my project: **SFORA (Smart File Organizer with Rule-Based Automation)**.  
-I built this project to solve a problem I face every single week: my Downloads and Documents folders turning into an absolute chaotic mess of PDFs, Images, Zip files, and duplicate junk.
+Honestly, my Downloads folder was an absolute disaster. I couldn't find a single PDF or image because everything was just dumped into one massive list. I got tired of manually dragging files around every week, so I decided to learn file I/O and build **SFORA** over a couple of late nights.
 
-Doing this by hand was taking too long, so I created a pure Java application to automate it. It scans folders, identifies file types, catches exact duplicates intelligently using binary hashing, and files everything away neatly.
+It’s a command-line tool that just *reads your messy folder* and automatically moves all the files into neat folders like `Documents`, `Images`, and `Archives` based on their type. It even lets you set custom rules in a text file.
 
-## ✨ Why I Built This / The Features You'll Love
-- **Total Automation**: Point it at a messy folder, and it perfectly categorizes everything into `Documents`, `Images`, `Media`, etc.
-- **Deep Scan Mode**: Sometimes files aren't just in the root folder, they are stuck deep inside other extracted generic folders. Deep Scan recurses through all subfolders to rip out the files and organize them at the top level! 
-- **Custom Rule Engine**: I added a `rules.txt` file because sometimes you want specific things (like files with "assignment" in the name) going to a specific folder instead of just the generic "Documents" folder. 
-- **The Duplicate Catcher**: Sometimes I accidentally download the exact same PDF multiple times with weird names like `file(1).pdf`. SFORA actually reads the file contents (SHA-256) and isolates duplicates into a `Duplicates/` folder so my drive doesn't get cluttered.
-- **The "Full Undo" Framework**: Moving a hundred files by accident is terrifying. SFORA tracks the exact origin of every single specific file movement in an `ActionLog` stack. You can quickly **Undo exactly ONE Last Move** or trigger a **Full Revert** putting the entire chaotic folder perfectly back the way it started.
-- **Folder Cleanup**: After moving files out of sub-folders during a Deep Scan, SFORA can automatically delete all the useless, completely empty folders left behind.
-- **Performance Summary**: At the very end, it gives you a clean performance report showing Time Elapsed, Megabytes of Data Processed, and Exact Files Moved!
+## Why did I build this?
+1. **Automation**: Why do manually what Java can do in literally 30 milliseconds?
+2. **Duplicate Finding**: I kept downloading the same assignment files (`project(1).pdf`, `project(2).pdf`). SFORA actually reads the byte hash of the file and catches identical duplicates!
+3. **Fear of Mistakes**: Moving hundreds of files at once is scary. I added a **Dry Run (Preview)** mode so I can see what it *will* do before it actually touches my hard drive.
+4. **Undo Saves Lives**: I built a `FileLogger` module. Every single time a file gets moved, it logs the exact path to an `action_log.txt` file. If I mess up, I can just select "Undo All Changes" and it literally puts the entire directory back exactly how it was!
 
-## 🚀 How to Run It
+## Cool Features I Added
+- **Interactive UI**: No confusing flags or commands. Just run the file and follow the 1-7 menu.
+- **Safe Mode**: It will prompt you `Are you sure? (y/n)` before it ruins your folder structure if you want it to.
+- **Large File Detector**: Warns you if there are giant files (like 4GB video files) taking up space during a preview scan!
+- **Empty Folder Cleaner**: SFORA deletes left-behind empty folders so things stay pristine.
 
-I didn't use any external bloated frameworks—just core Java. 
-
-**Compile the Code:**
-Open your terminal (in this directory) and make sure you have Java installed.
-```bash
+## How to use it
+It’s completely written in core Java, so there’s no weird setups required.
+Just compile the 6 files like this:
+```
 mkdir bin
-javac -d bin src/com/sfora/*.java
+javac -d bin src/*.java
 ```
 
-**Run It:**
-```bash
-java -cp bin com.sfora.SforaApp
+And then run the entry point:
+```
+java -cp bin Main
 ```
 
-A console menu will open up and walk you through everything!
+### Sample Output (Dry Run)
+```
+What would you like to do?
+1 - Start File Organizer
+2 - Undo Last Operation
+3 - Undo All Changes (Full Rollback)
+4 - Preview Changes (Dry Run)
+5 - Clean File Names Automatically
+6 - Find Exact Duplicates
+7 - Exit Program
+> Pick an option (1-7): 4
 
-## Challenges & Learning
-The hardest part was building the Duplicate Detection efficiently without slowing down the application, and dealing with files that have annoying spaces and special characters. Implementing the Full Reversal "Undo All" also proved challenging because if a directory was cleaned up, the Undo framework actually had to regenerate the parent directories safely to place the files back! I used standard `nio.file` and `java.security.MessageDigest` which taught me an immense amount about how core OS file-streams work!
+--- DRY RUN (Preview) ---
+No actual files will be moved during this preview.
+
+WILL MOVE: math_assignment.pdf -> C:\Downloads\University\math_assignment.pdf
+WILL MOVE: funny_cat.jpg -> C:\Downloads\Images\funny_cat.jpg
+
+--- Predicted Summary ---
+Total Files to Route: 2
+Giant Files (>100MB): 0 (might want to check these!)
+Total Size Organized: 34 MB
+------------------------
+```
+
+Hope this saves you as much time as it saved me!
